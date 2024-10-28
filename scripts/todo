@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# what dis does, is make todo in $HOME/.todo
+# and u can manage deez and so on
+
 todo() {
     local todo_file="$HOME/.todo"
 

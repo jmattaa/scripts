@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# make stdin a emoji!!!
+
 declare -A emoji
 emoji[":)"]=😀
 emoji[":bear"]=🐻

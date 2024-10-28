@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# extract de compressioned files without gui cuz we go brrrrrrr
+
 extract ()
 {
   if [ -f "$1" ] ; then
