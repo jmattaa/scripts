@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+todo() {
+    local todo_file="$HOME/.todo"
+
+    [[ ! -f "$todo_file" ]] && touch "$todo_file"
+
+    case "$1" in
+        "add")
+            shift
+            if [[ "$#" -ne 1 ]]; then
+                echo "todo: man give me a name in quotes \"\""
+                return 1
+            fi
+            echo "- [ ] $1" >> "$todo_file"
+            ;;
+
+        "list")
+            nl -w 2 -s ". " "$todo_file"
+            ;;
+
+        "done")
+            shift
+            if [[ "$#" -ne 1 || ! "$1" =~ ^[0-9]+$ ]]; then
+                echo "todo: specify the task to mark as done!"
+                return 1
+            fi
+            sed "${1}s/\[ \]/[x]/" "$todo_file" > "$todo_file.tmp" && 
+                mv "$todo_file.tmp" "$todo_file"
+            ;;
+
+        "remove")
+            shift
+            if [[ "$#" -ne 1 || ! "$1" =~ ^[0-9]+$ ]]; then
+                echo "todo: specify the task to remove!"
+                return 1
+            fi
+            sed "${1}d" "$todo_file" > "$todo_file.tmp" && 
+                mv "$todo_file.tmp" "$todo_file"
+            ;;
+
+        *)
+    esac
+
+    if [[ ! $1 ]]; then
+        vi "$todo_file"
+    fi
+}
+
+todo "$@"
+
