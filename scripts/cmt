@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# toggle a prefix on all lines with a COMMENT_PREFIX
+# dosen't have to be a comment it can make a list or stuff yk
+
+cmt() {
+    DEFAULT_PREFIX="#"
+    COMMENT_PREFIX="${1:-${DEFAULT_PREFIX}}" 
+
+    while IFS= read -r line; do
+        if [[ "$line" =~ ^[[:space:]]*$COMMENT_PREFIX ]]; then
+            echo "$line" | sed "s|^[[:space:]]*$COMMENT_PREFIX[[:space:]]*||"
+        else
+            echo "$COMMENT_PREFIX $line"
+        fi
+    done
+}
+
+cmt "$@"
