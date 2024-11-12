@@ -6,6 +6,18 @@ declare -A emoji
 emoji[":)"]=😀
 emoji[":bear"]=🐻
 emoji[":("]=😢
+emoji[":fire"]=🔥
+emoji[":tada"]=🎉
+emoji[":lmao"]=😭
+emoji[":cat"]=🐱
+emoji[":dog"]=🐶
+emoji[":panda"]=🐼
+emoji[":penguin"]=🐧
+emoji[":unicorn"]=🦄
+emoji[":skull"]=💀
+emoji[":ghost"]=👻
+emoji[":robot"]=🤖
+emoji[":smile"]=😄
 
 toemoji() {
     while read -r line; do 
