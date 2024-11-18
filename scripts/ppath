@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# pretty print path with 
+
+echo $PATH | tr ':' '\n' 
