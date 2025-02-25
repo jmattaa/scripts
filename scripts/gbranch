@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# this is inspired from https://youtu.be/aolI_Rz0ZqY?si=-1yNbGjRLPGm0cgu&t=473
+# ant this gist https://gist.github.com/schacon/e9e743dee2e92db9a464619b99e94eff
+# it be kinda fire 🔥
+# it just lists the branches in a nice way
+
+RED='\033[0;31m'
+GREEN='\033[0;32;1;3;4m'
+NO_COLOR='\033[0m'
+BLUE='\033[0;34m'
+YELLOW='\033[0;33m'
+RESET='\033[0m'
+
+this_branch=$(git rev-parse HEAD)
+
+branches=()
+eval "$(git for-each-ref --shell --format='branches+=(%(refname))' refs/heads/)"
+
+for branch in "${branches[@]}"; do
+    output_color="${BLUE}"
+    if [ "$branch" == "$(git symbolic-ref HEAD)" ]; then
+        output_color="${GREEN}"
+    fi
+
+    output="${output_color}${branch}${RESET}"
+
+    # relative to this branch
+    ahead_behind=$(git rev-list --left-right --count "$branch"..."$this_branch")
+
+    commits_ahead=$(echo "$ahead_behind" | awk '{print $1}')
+    commits_behind=$(echo "$ahead_behind" | awk '{print $2}')
+
+    # this will append the commits ahead before the commits behind
+    if [ "$commits_ahead" -gt 0 ]; then
+        output+=" (${GREEN}+${commits_ahead}${RESET})"
+    fi
+    if [ "$commits_behind" -gt 0 ]; then
+        output+=" (${RED}-${commits_behind}${RESET})"
+    fi
+
+    echo -e "$output"
+done
+
+echo -e "\n${YELLOW}Total branches: ${RESET}${#branches[@]}"
