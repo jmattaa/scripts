@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+# will create the files and folders needed for a (new p)roject
+# and therfore newp
+
+projtypes=("c" "go" "py")
+
+projname="$1"
+projtype="$2"
+
+if [ -z "$projname" ]; then printf "\033[0;31mnewp\033[0m: man give me a name\n"; exit 1; fi
+if [ -d "$projname" ]; then
+    printf "\033[0;31mnewp\033[0m: '$projname' already exists pick another name, man\n"
+    exit 1
+fi
+if [ -z "$projtype" ]; then
+    select projtype in "${projtypes[@]}"; do
+        break
+    done
+fi
+if [[ ! " ${projtypes[*]} " =~ " $projtype " ]]; then
+    printf "\033[0;31mnewp\033[0m: '$projtype' is not a valid project type\n"
+    exit 1
+fi
+
+
+mkdir "$projname" && cd "$projname"
+git init
+touch .gitignore README.md
+echo "# $projname" >> README.md
+
+setup_c() {
+    mkdir src include
+    touch src/main.c CMakeLists.txt
+
+    cat <<EOF >> CMakeLists.txt 
+cmake_minimum_required(VERSION 3.18)
+project($projname LANGUAGES C)
+
+file(GLOB_RECURSE SRCS "\${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
+include_directories("\${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+add_executable(\${PROJECT_NAME} \${SRCS})
+EOF
+
+    cat <<EOF >> src/main.c
+#include <stdio.h>
+
+int main(int argc, char **argv) 
+{
+    printf("Hello, World!\n");
+    return 0;
+}
+EOF
+    
+    echo "build/" >> .gitignore
+
+    # color the output
+    printf "building $projname with \033[0;35mcmake...\033[0m\n"
+
+    cmake -S . -B build
+    cmake --build build
+}
+
+setup_go() {
+    touch main.go
+    go mod init github.com/jmattaa/"$projname"
+
+    cat<<EOF >> main.go 
+package main
+
+func main() {
+    println("Hello, World!")
+}
+EOF
+
+    # cuz that be the name of the exec being build
+    echo "$projname" >> .gitignore
+
+    printf "building $projname with \033[0;35mgo build...\033[0m\n"
+
+    go build
+}
+
+setup_py() {
+    touch main.py
+
+    cat <<EOF >> main.py
+if __name__ == "__main__":
+    print("Hello, World!")
+EOF
+}
+
+"setup_$projtype" || {
+    echo "newp: '$projtype' is not a valid project type"
+    exit 1
+}
+printf "\033[0;32mproject $projname created!\033[0m\n"
