@@ -48,6 +48,10 @@ todo() {
                 mv "$todo_file.tmp" "$todo_file"
             ;;
 
+        "getfile")
+            echo "$todo_file"
+            ;;
+
         *)
     esac
 
