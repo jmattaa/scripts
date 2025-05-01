@@ -5,8 +5,12 @@
 
 projtypes=("c" "go" "py")
 
+SCRIPT_DIR=$(dirname "$(realpath $0)")
+
 projname="$1"
 projtype="$2"
+build_sys="$3"
+build_sys=$(echo "$build_sys" | tr '[:upper:]' '[:lower:]')
 
 if [ -z "$projname" ]; then printf "\033[0;31mnewp\033[0m: man give me a name\n"; exit 1; fi
 if [ -d "$projname" ]; then
@@ -31,18 +35,27 @@ echo "# $projname" >> README.md
 
 setup_c() {
     mkdir src include
-    touch src/main.c CMakeLists.txt
 
-    cat <<EOF >> CMakeLists.txt 
-cmake_minimum_required(VERSION 3.18)
-project($projname LANGUAGES C)
+    case "$build_sys" in 
+        "cmake")       file="CMakeLists.txt" ;;
+        "make")        file="Makefile" ;;
+        "quickbuild"|"qb") file="quickbuild" ;;
+        *)
+            printf "\033[0;33mcreating project without a build system!\033[0m\n"
+            file=""
+            ;;
+    esac
 
-file(GLOB_RECURSE SRCS "\${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
-include_directories("\${CMAKE_CURRENT_SOURCE_DIR}/include")
+    if [ -n "$file" ]; then
+        cp "$SCRIPT_DIR/newpfiles/$file" "$file"
 
-add_executable(\${PROJECT_NAME} \${SRCS})
-EOF
+        # this is so it works on mac and linux
+        tmpfile=$(mktemp)
+        sed "s/__NEWP_PROJNAME__/$projname/g" "$file" > "$tmpfile" && \
+            mv "$tmpfile" "$file"
+    fi
 
+    touch src/main.c
     cat <<EOF >> src/main.c
 #include <stdio.h>
 
@@ -58,12 +71,6 @@ build/
 .cache
 compile_commands.json
 EOF
-
-    # color the output
-    printf "building $projname with \033[0;35mcmake...\033[0m\n"
-
-    cmake -S . -B build
-    cmake --build build
 }
 
 setup_go() {
