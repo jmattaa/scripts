@@ -13,6 +13,18 @@ NC="\033[0m"
 
 BAR_WIDTH=40
 
+play_sound() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        afplay /System/Library/Sounds/Glass.aiff &
+    elif command -v paplay &>/dev/null; then
+        paplay /usr/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null &
+    elif command -v aplay &>/dev/null; then
+        aplay /usr/share/sounds/alsa/Front_Center.wav 2>/dev/null &
+    else
+        echo "couldn't play sound try to edit the script"
+    fi
+}
+
 fmt_time() {
     printf "%02d:%02d" $(( $1 / 60 )) $(( $1 % 60 ))
 }
@@ -55,6 +67,8 @@ pomo() {
             sleep 1
         fi
     done
+
+    play_sound
     echo -e "\n${GREEN}Session Complete!${NC}"
 }
 
