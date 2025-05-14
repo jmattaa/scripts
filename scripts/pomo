@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+# simple pomodoro timer inspired by 
+# https://www.youtube.com/watch?v=GfQjJBtO-8Y
+
+declare -A opts
+opts["work"]=45
+opts["break"]=10
+
+GREEN="\033[0;32m"
+YELLOW="\033[0;33m"
+NC="\033[0m"
+
+BAR_WIDTH=40
+
+fmt_time() {
+    printf "%02d:%02d" $(( $1 / 60 )) $(( $1 % 60 ))
+}
+
+pomo() {
+    if [ -z "$1" ]; then
+        echo "Usage: pomo [OPTION|DURATION in seconds]"
+        echo "OPTIONS:"
+        for arg in "${!opts[@]}"; do
+            for val in "${opts[$arg]}"; do
+                echo "$arg $val"
+            done
+        done
+        exit 1
+    fi
+
+    if [ -z "${opts[$1]}" ]; then
+        dur=$1
+    else
+        dur=$((${opts[$1]} * 60))
+    fi
+
+    echo -e "${GREEN}Starting $1 session for $(fmt_time $dur)${NC}"
+    
+    # the +1 gives us one more loop iteration to fill the bar
+    for ((i = 0; i < $dur + 1; i++)); do
+        percent=$(( i * 100 / dur ))
+        filled=$(( BAR_WIDTH * percent / 100 ))
+
+        BAR=$(printf "%-${BAR_WIDTH}s" "" | sed "s/ /█/g")
+        EMPTY_BAR=$(printf "%-${BAR_WIDTH}s" "" | sed "s/ /░/g")
+        TIME_LEFT=$(fmt_time $((dur - i)))
+
+        printf "\r${YELLOW}[%s%s] %d%% - %s remaining${NC}" \
+            "${BAR:0:$filled}" "${EMPTY_BAR:$filled:$((BAR_WIDTH - filled))}" "$percent" "$TIME_LEFT"
+
+        # this makes sure that on the last iteration we don sleep so we get
+        # the right amount of time
+        if [ $i -lt $dur ]; then
+            sleep 1
+        fi
+    done
+    echo -e "\n${GREEN}Session Complete!${NC}"
+}
+
+pomo "$@"
+
