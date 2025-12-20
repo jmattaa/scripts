@@ -9,9 +9,7 @@ tn() {
         session_name="$1-$session_name"
     fi
 
-    tmux new-session -d -s "$session_name" -n editor "nvim"
-    tmux new-window -t "$session_name":2
-    tmux select-window -t "$session_name:1"
+    tmux new-session -d -s "$session_name"
 
     if [ -n "$TMUX" ]; then
         # switch to the session
