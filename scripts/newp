@@ -39,7 +39,7 @@ setup_c() {
     case "$build_sys" in 
         "cmake")       file="CMakeLists.txt" ;;
         "make")        file="Makefile" ;;
-        "quickbuild"|"qb") file="quickbuild" ;;
+        "qvickbuild"|"qb") file="qvickbuild" ;;
         *)
             printf "\033[0;33mcreating project without a build system!\033[0m\n"
             file=""
