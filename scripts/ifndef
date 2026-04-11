@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# ts be fire 🔥
+# to use it in neovim you can do :.!ifndef %:t and it'll insert that shi in!!!
+# I'll prolly be creating a nvim shortcut for this too
+
+fn="$1"
+deffn=${fn//./_}
+deffn=${deffn^^}
+
+cat <<EOF
+#ifndef ${deffn}
+#define ${deffn}
+
+#endif
+EOF
