@@ -19,6 +19,7 @@ emoji[":ghost"]=👻
 emoji[":robot"]=🤖
 emoji[":smile"]=😄
 emoji[":thinking"]=🤔
+emoji[":idk"]=🤷‍♂️
 
 toemoji() {
     while read -r line; do 
