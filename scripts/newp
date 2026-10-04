@@ -40,6 +40,7 @@ setup_c() {
         "cmake")       file="CMakeLists.txt" ;;
         "make")        file="Makefile" ;;
         "qvickbuild"|"qb") file="qvickbuild" ;;
+        "sh")          file="build.sh" ;;
         *)
             printf "\033[0;33mcreating project without a build system!\033[0m\n"
             file=""

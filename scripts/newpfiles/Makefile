@@ -4,7 +4,7 @@ cflags=-Iinclude
 cflagsdev=-g -Wall -Wextra -fsanitize=address $(cflags)
 cflagsrel=-O3 $(cflags)
  
-lflags=$(shell pkg-config --libs ncurses)
+lflags=
 lflags_dev=-g -fsanitize=address $(lflags)
 lflags_rel=$(lflags)
  
